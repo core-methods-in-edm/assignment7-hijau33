@@ -9,21 +9,53 @@ In the following assignment you will be looking at data from an one level of an 
 
 #Upload data
 ```{r}
-
+D1 <- read.csv("online.data.csv")
+library(ggplot2)
+library(corrplot)
+library(tidyr)
 ```
 
 #Visualization 
 ```{r}
 #Start by creating histograms of the distributions for all variables (#HINT: look up "facet" in the ggplot documentation)
 
-#Then visualize the relationships between variables
+mean(D1$post.test.score)
+mean(D1$pre.test.score)
+mean(D1$messages)
+mean(D1$forum.posts)
+mean(D1$av.assignment.score)
 
+D1$post.test.score_times_200 <- D1$post.test.score*200
+D1$pre.test.score_times_200 <- D1$pre.test.score*200
+D1$forum.posts_times_10 <- D1$forum.posts*10
+D1$av.assignment.score_times_500 <- D1$av.assignment.score*500
+D2 <- (D1[, c(7:11, 4)])
+D2.long <- gather(D2,"variable", "value", 2:6)
+
+p1 <- ggplot(data = D2.long, aes(x = value)) + geom_histogram(binwidth=3) + facet_grid(level.up ~ variable) 
+plot(p1) 
+
+#Then visualize the relationships between variables
+D2$level.up_num <- as.integer(D2$level.up)
+D2$level.up_times_100 <- D2$level.up_num*100
+D3 <- (D2[, c(2:6, 8)])
+COR <- cor(D3)
+
+corrplot(COR, order="AOE", method="circle", tl.pos="lt", type="upper",        
+tl.col="black", tl.cex=0.6, tl.srt=45, 
+        addCoef.col="black", addCoefasPercent = TRUE,
+        sig.level=0.50, insig = "blank")
 #Try to capture an intution about the data and the relationships
 
 ```
+
+###Thoughts about the data and the relationships
+There appears to be a high correlation between av.assignment score, post.test.score and messages with whether the student advanced to the next level up.
+
 #Classification tree
 ```{r}
 #Create a classification tree that predicts whether a student "levels up" in the online course using three variables of your choice (As we did last time, set all controls to their minimums)
+
 
 #Plot and generate a CP table for your tree 
 
